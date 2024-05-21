@@ -1,7 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'Model/contents.dart';
+import 'Model/parts.dart';
+import 'Model/request.dart';
+import 'Model/response.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +19,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Gemini REST API Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.black87),
+          titleLarge: TextStyle(color: Colors.white),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            minimumSize: const Size(88, 36),
+            padding: EdgeInsets.zero,
+          ),
+        ),
       ),
       home: const MyHomePage(title: 'Flutter Gemini REST API Demo'),
     );
@@ -32,79 +52,92 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final String GeminiAPIKey = ""; //TODO: ADD YOUR API KEY HERE
+  final String GEMINI_API_KEY = "YOUR_API_KEY_HERE"; //TODO: Replace with your actual API key
   final TextEditingController _chatController = TextEditingController();
-  String responseMessage = "No Status Code";
+  String responseMessage = "Hello 👋, No response yet!";
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(widget.title, style: Theme.of(context).textTheme.titleLarge),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(responseMessage),
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      hintText: "Type a message",
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(8.0),
-                    ),
-                    controller: _chatController,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _isLoading ? _buildLoadingIndicator() : Container(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    responseMessage,
+                    style: const TextStyle(fontSize: 18.0),
                   ),
                 ),
               ),
-            ),
-            // const SizedBox(width: 4.0,),
-            MaterialButton(
-              onPressed: () => callGemini(),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0)),
-              padding: const EdgeInsets.all(0.0),
-              child: Ink(
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+              TextField(
+                controller: _chatController,
+                decoration: InputDecoration(
+                  hintText: "Type a message",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: const BorderSide(
+                      color: Colors.deepPurple,
+                      width: 2.0,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.all(16.0),
                 ),
-                child: Container(
-                    constraints: const BoxConstraints(
-                        minWidth: 88.0, minHeight: 36.0),
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.send, color: Colors.white,)
+                maxLines: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: ElevatedButton.icon(
+                  onPressed: () => _callGemini(),
+                  iconAlignment: IconAlignment.end,
+                  label: const Text('Send', style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.send, color: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                  ),
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  callGemini() async {
-    final url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key="+GeminiAPIKey;
-    final uri = Uri.parse(url);
-    List<Map<String,String>> msg = [];
-    msg.add({"text":  _chatController.text});
-    Map<String, dynamic> request = {
-      "contents": {
-        "parts": [msg]
-      },
-    };
+  Widget _buildLoadingIndicator() {
+    return const CircularProgressIndicator(color: Colors.deepPurple);
+  }
 
-    final response = await http.post(uri, body: jsonEncode(request));
+  _callGemini() async {
     setState(() {
-      responseMessage = json.decode(response.body)["candidates"][0]["content"]["parts"][0]["text"];
+      _isLoading = true;
+    });
+    final url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=$GEMINI_API_KEY";
+    final uri = Uri.parse(url);
+    Request request = Request();
+    List<Parts> partsList = [Parts(text: _chatController.text)];
+    List<Contents> contentsList = [Contents(parts: partsList)];
+    request.contents = contentsList;
+
+    final rawResponse = await http.post(uri, body: jsonEncode(request.toJson()));
+    Response response = Response.fromJson(jsonDecode(rawResponse.body));
+    setState(() {
+      _isLoading = false;
+      responseMessage = response.candidates!.first.content!.parts!.first.text!;
     });
   }
 }

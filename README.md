@@ -1,16 +1,34 @@
-# gemini_restapi
+# Flutter Gemini REST API Demo
 
-A new Flutter project.
+This is a Flutter application demonstrating how to call the Gemini Generative Language Model API.
 
-## Getting Started
+**Requirements:**
 
-This project is a starting point for a Flutter application.
+* Flutter SDK: https://docs.flutter.dev/get-started/install(https://flutter.dev/docs/get-started/install)
+* A Google Cloud Project with the Generative Language API enabled: https://console.cloud.google.com/
 
-A few resources to get you started if this is your first Flutter project:
+**Instructions:**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone this repository.
+2. Create a Google Cloud project and enable the Generative Language API.
+3. Create an API key for your project and replace the `GEMINI_API_KEY` constant in the `_MyHomePageState` class with your actual API key.
+4. Run the application using `flutter run`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**How it Works:**
+
+The application allows you to type a message and send it to the Gemini model. Once sent, it uses the `http` package to make a POST request to the Gemini API endpoint. The request body contains the message you entered.
+
+The response from the API is parsed and the generated text from the first candidate is displayed on the screen.
+
+**Model Files:**
+
+* `Model/contents.dart`: Contains the `Contents` class representing the content to be processed by Gemini.
+* `Model/parts.dart`: Contains the `Parts` class representing the parts of the content.
+* `Model/request.dart`: Contains the `Request` class representing the request sent to the Gemini API.
+* `Model/response.dart`: Contains the `Response` class representing the response received from the Gemini API.
+
+**Further Enhancements:**
+
+* Error handling for API calls.
+* Implement a more user-friendly chat interface.
+* Integrate UI elements to display additional response information (e.g., confidence score).
