@@ -10,10 +10,6 @@ Gemini, a revolutionary brainchild of Google DeepMind, transcends the boundaries
 
 <img height="350px" src="screenshots/1.png"
 alt="Screenshot" />
-<img height="350px" src="screenshots/2.png"
-alt="Screenshot" />
-<img height="350px" src="screenshots/3.png"
-alt="Screenshot" />
 <img height="350px" src="screenshots/4.png"
 alt="Screenshot" />
 
