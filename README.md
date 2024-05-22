@@ -6,6 +6,16 @@ This Flutter project serves as a comprehensive demonstration of integrating the 
 
 Gemini, a revolutionary brainchild of Google DeepMind, transcends the boundaries of traditional language models. This multimodal powerhouse seamlessly processes and generates text, images, code, and even audio, paving the way for a new era of rich and interactive user experiences.
 
+**Screenshots:**
+<img height="350px" src="screenshots/1.png"
+alt="Screenshot" />
+<img height="350px" src="screenshots/2.png"
+alt="Screenshot" />
+<img height="350px" src="screenshots/3.png"
+alt="Screenshot" />
+<img height="350px" src="screenshots/4.png"
+alt="Screenshot" />
+
 **Prerequisites:**
 
 * Flutter SDK: Equip yourself with the latest Flutter development tools. Check out the official documentation for seamless installation: https://docs.flutter.dev/get-started/install(https://flutter.dev/docs/get-started/install)
