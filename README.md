@@ -22,8 +22,8 @@ alt="Screenshot" />
 
 1. Clone the Repository: Begin by cloning this repository to your local development environment.
 2. Forge Your Google Cloud Project: Create a Google Cloud Project and activate the Generative Language API. This grants your project access to the power of Gemini.
-3. Unlocking Gemini's Potential: Obtain an API key unique to your project. Replace the placeholder GEMINI_API_KEY constant in the _MyHomePageState class with your actual key. This grants secure communication with the API.
-4. Let the Magic Begin: Execute the application using the flutter run command. Witness the magic of Gemini unfold as your app interacts with the API.
+3. Unlocking Gemini's Potential: Obtain an API key unique to your project. Replace the placeholder `GEMINI_API_KEY` constant in the `_MyHomePageState` class with your actual key. This grants secure communication with the API.
+4. Let the Magic Begin: Execute the application using the `flutter run` command. Witness the magic of Gemini unfold as your app interacts with the API.
 
 **Understanding the Mechanism:**
 
